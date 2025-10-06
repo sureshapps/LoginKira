@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculator with Login System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 450px;
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+        }
+        
+        .login-container {
+            padding: 30px;
+        }
+        
+        .calculator-container {
+            display: none;
+            padding: 20px;
+        }
+        
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: 500;
+        }
+        
+        input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border 0.3s;
+        }
+        
+        input:focus {
+            outline: none;
+            border-color: #6a11cb;
+            box-shadow: 0 0 0 2px rgba(106, 17, 203, 0.2);
+        }
+        
+        button {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .calculator-display {
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+            text-align: right;
+            font-size: 24px;
+            font-weight: 500;
+            min-height: 60px;
+            border: 1px solid #ddd;
+            overflow-x: auto;
+        }
+        
+        .calculator-buttons {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+        }
+        
+        .calc-btn {
+            padding: 15px;
+            font-size: 18px;
+            background-color: #f1f3f4;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        
+        .calc-btn:hover {
+            background-color: #e4e6e7;
+        }
+        
+        .operator {
+            background-color: #4285f4;
+            color: white;
+        }
+        
+        .operator:hover {
+            background-color: #3367d6;
+        }
+        
+        .equals {
+            background-color: #34a853;
+            color: white;
+        }
+        
+        .equals:hover {
+            background-color: #2e8b47;
+        }
+        
+        .clear {
+            background-color: #ea4335;
+            color: white;
+        }
+        
+        .clear:hover {
+            background-color: #d33426;
+        }
+        
+        .logout-btn {
+            background: linear-gradient(135deg, #ea4335 0%, #d33426 100%);
+            margin-top: 15px;
+        }
+        
+        .message {
+            text-align: center;
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 5px;
+            font-weight: 500;
+        }
+        
+        .success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Login Section -->
+        <div class="login-container" id="loginSection">
+            <h1>Login to Calculator</h1>
+            <div class="form-group">
+                <label for="username">Email</label>
+                <input type="email" id="username" placeholder="Enter your email">
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" placeholder="Enter your password">
+            </div>
+            <button id="loginBtn">Login</button>
+            <div id="loginMessage" class="message hidden"></div>
+        </div>
+        
+        <!-- Calculator Section -->
+        <div class="calculator-container" id="calculatorSection">
+            <h1>Calculator</h1>
+            <div class="calculator-display" id="display">0</div>
+            <div class="calculator-buttons">
+                <button class="calc-btn clear" id="clear">C</button>
+                <button class="calc-btn operator" data-operation="power">x^y</button>
+                <button class="calc-btn operator" data-operation="percentage">%</button>
+                <button class="calc-btn operator" data-operation="divide">/</button>
+                
+                <button class="calc-btn" data-number="7">7</button>
+                <button class="calc-btn" data-number="8">8</button>
+                <button class="calc-btn" data-number="9">9</button>
+                <button class="calc-btn operator" data-operation="multiply">×</button>
+                
+                <button class="calc-btn" data-number="4">4</button>
+                <button class="calc-btn" data-number="5">5</button>
+                <button class="calc-btn" data-number="6">6</button>
+                <button class="calc-btn operator" data-operation="subtract">-</button>
+                
+                <button class="calc-btn" data-number="1">1</button>
+                <button class="calc-btn" data-number="2">2</button>
+                <button class="calc-btn" data-number="3">3</button>
+                <button class="calc-btn operator" data-operation="add">+</button>
+                
+                <button class="calc-btn" data-number="0">0</button>
+                <button class="calc-btn" id="decimal">.</button>
+                <button class="calc-btn equals" id="equals">=</button>
+            </div>
+            <button class="logout-btn" id="logoutBtn">Logout</button>
+        </div>
+    </div>
+
+    <script>
+        // DOM Elements
+        const loginSection = document.getElementById('loginSection');
+        const calculatorSection = document.getElementById('calculatorSection');
+        const loginBtn = document.getElementById('loginBtn');
+        const logoutBtn = document.getElementById('logoutBtn');
+        const usernameInput = document.getElementById('username');
+        const passwordInput = document.getElementById('password');
+        const loginMessage = document.getElementById('loginMessage');
+        const display = document.getElementById('display');
+        const clearBtn = document.getElementById('clear');
+        const equalsBtn = document.getElementById('equals');
+        const decimalBtn = document.getElementById('decimal');
+        const numberButtons = document.querySelectorAll('[data-number]');
+        const operatorButtons = document.querySelectorAll('[data-operation]');
+        
+        // Calculator state
+        let currentInput = '0';
+        let previousInput = '';
+        let operation = null;
+        let resetScreen = false;
+        
+        // Login function
+        function login() {
+            const username = usernameInput.value;
+            const password = passwordInput.value;
+            
+            if (username === "zeeshanali@gmail.com" && password === "test1234") {
+                showMessage("Login successful!", "success");
+                setTimeout(() => {
+                    loginSection.style.display = 'none';
+                    calculatorSection.style.display = 'block';
+                    resetCalculator();
+                }, 1000);
+            } else {
+                showMessage("Invalid username or password", "error");
+            }
+        }
+        
+        // Logout function
+        function logout() {
+            calculatorSection.style.display = 'none';
+            loginSection.style.display = 'block';
+            usernameInput.value = '';
+            passwordInput.value = '';
+            loginMessage.classList.add('hidden');
+        }
+        
+        // Show message function
+        function showMessage(message, type) {
+            loginMessage.textContent = message;
+            loginMessage.className = 'message';
+            loginMessage.classList.add(type);
+            loginMessage.classList.remove('hidden');
+        }
+        
+        // Calculator functions
+        function resetCalculator() {
+            currentInput = '0';
+            previousInput = '';
+            operation = null;
+            resetScreen = false;
+            updateDisplay();
+        }
+        
+        function updateDisplay() {
+            display.textContent = currentInput;
+        }
+        
+        function appendNumber(number) {
+            if (currentInput === '0' || resetScreen) {
+                currentInput = number;
+                resetScreen = false;
+            } else {
+                currentInput += number;
+            }
+            updateDisplay();
+        }
+        
+        function addDecimal() {
+            if (resetScreen) {
+                currentInput = '0.';
+                resetScreen = false;
+            } else if (!currentInput.includes('.')) {
+                currentInput += '.';
+            }
+            updateDisplay();
+        }
+        
+        function chooseOperation(op) {
+            if (operation !== null) calculate();
+            
+            operation = op;
+            previousInput = currentInput;
+            resetScreen = true;
+        }
+        
+        function calculate() {
+            let computation;
+            const prev = parseFloat(previousInput);
+            const current = parseFloat(currentInput);
+            
+            if (isNaN(prev) || isNaN(current)) return;
+            
+            switch (operation) {
+                case 'add':
+                    computation = prev + current;
+                    break;
+                case 'subtract':
+                    computation = prev - current;
+                    break;
+                case 'multiply':
+                    computation = prev * current;
+                    break;
+                case 'divide':
+                    if (current === 0) {
+                        alert("Cannot divide by zero");
+                        resetCalculator();
+                        return;
+                    }
+                    computation = prev / current;
+                    break;
+                case 'power':
+                    computation = Math.pow(prev, current);
+                    break;
+                case 'percentage':
+                    computation = (prev / current) * 100;
+                    break;
+                default:
+                    return;
+            }
+            
+            currentInput = computation.toString();
+            operation = null;
+            previousInput = '';
+            resetScreen = true;
+            updateDisplay();
+        }
+        
+        // Event Listeners
+        loginBtn.addEventListener('click', login);
+        logoutBtn.addEventListener('click', logout);
+        
+        // Allow pressing Enter to login
+        passwordInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                login();
+            }
+        });
+        
+        // Calculator event listeners
+        clearBtn.addEventListener('click', resetCalculator);
+        
+        decimalBtn.addEventListener('click', addDecimal);
+        
+        equalsBtn.addEventListener('click', () => {
+            if (operation !== null) {
+                calculate();
+            }
+        });
+        
+        numberButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                appendNumber(button.getAttribute('data-number'));
+            });
+        });
+        
+        operatorButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                chooseOperation(button.getAttribute('data-operation'));
+            });
+        });
+        
+        // Initialize
+        resetCalculator();
+    </script>
+</body>
+</html>
